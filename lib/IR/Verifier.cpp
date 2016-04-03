@@ -365,7 +365,8 @@ private:
   void visitFunction(const Function &F);
   void visitBasicBlock(BasicBlock &BB);
   void visitRangeMetadata(Instruction& I, MDNode* Range, Type* Ty);
-  void visitDereferenceableMetadata(Instruction& I, MDNode* MD);
+  void visitDereferenceableMetadata(Instruction& I, MDNode* MD,
+                                    StringRef Name);
 
   template <class Ty> bool isValidMetadataArray(const MDTuple &N);
 #define HANDLE_SPECIALIZED_MDNODE_LEAF(CLASS) void visit##CLASS(const CLASS &N);
@@ -3579,17 +3580,16 @@ void Verifier::verifyDominatesUse(Instruction &I, unsigned i) {
          "Instruction does not dominate all uses!", Op, &I);
 }
 
-void Verifier::visitDereferenceableMetadata(Instruction& I, MDNode* MD) {
-  Assert(I.getType()->isPointerTy(), "dereferenceable, dereferenceable_or_null "
-         "apply only to pointer types", &I);
+void Verifier::visitDereferenceableMetadata(Instruction& I, MDNode* MD,
+                                            StringRef Name) {
+  Assert(I.getType()->isPointerTy(), Name + " applies only to pointer types", &I);
   Assert(isa<LoadInst>(I),
-         "dereferenceable, dereferenceable_or_null apply only to load"
-         " instructions, use attributes for calls or invokes", &I);
-  Assert(MD->getNumOperands() == 1, "dereferenceable, dereferenceable_or_null "
-         "take one operand!", &I);
+         Name + " applies only to load instructions, use attributes "
+         "for calls or invokes", &I);
+  Assert(MD->getNumOperands() == 1, Name + " takes one operand!", &I);
   ConstantInt *CI = mdconst::dyn_extract<ConstantInt>(MD->getOperand(0));
-  Assert(CI && CI->getType()->isIntegerTy(64), "dereferenceable, "
-         "dereferenceable_or_null metadata value must be an i64!", &I);
+  Assert(CI && CI->getType()->isIntegerTy(64), Name + " metadata value "
+         "must be an i64!", &I);
 }
 
 /// verifyInstruction - Verify that an instruction is well formed.
@@ -3716,10 +3716,13 @@ void Verifier::visitInstruction(Instruction &I) {
   }
 
   if (MDNode *MD = I.getMetadata(LLVMContext::MD_dereferenceable))
-    visitDereferenceableMetadata(I, MD);
+    visitDereferenceableMetadata(I, MD, "dereferenceable");
 
   if (MDNode *MD = I.getMetadata(LLVMContext::MD_dereferenceable_or_null))
-    visitDereferenceableMetadata(I, MD);
+    visitDereferenceableMetadata(I, MD, "dereferenceable_or_null");
+
+  if (MDNode *MD = I.getMetadata(LLVMContext::MD_unconditionally_dereferenceable))
+    visitDereferenceableMetadata(I, MD, "unconditionally_dereferenceable");
 
   if (MDNode *AlignMD = I.getMetadata(LLVMContext::MD_align)) {
     Assert(I.getType()->isPointerTy(), "align applies only to pointer types",

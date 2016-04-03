@@ -373,6 +373,7 @@ static LoadInst *combineLoadToNewType(InstCombiner &IC, LoadInst &LI, Type *NewT
       break;
     case LLVMContext::MD_align:
     case LLVMContext::MD_dereferenceable:
+    case LLVMContext::MD_unconditionally_dereferenceable:
     case LLVMContext::MD_dereferenceable_or_null:
       // These only directly apply if the new type is also a pointer.
       if (NewTy->isPointerTy())
@@ -431,6 +432,7 @@ static StoreInst *combineStoreToNewValue(InstCombiner &IC, StoreInst &SI, Value 
     case LLVMContext::MD_range:
     case LLVMContext::MD_align:
     case LLVMContext::MD_dereferenceable:
+    case LLVMContext::MD_unconditionally_dereferenceable:
     case LLVMContext::MD_dereferenceable_or_null:
       // These don't apply for stores.
       break;
@@ -831,6 +833,7 @@ Instruction *InstCombiner::visitLoadInst(LoadInst &LI) {
           LLVMContext::MD_invariant_load,  LLVMContext::MD_nonnull,
           LLVMContext::MD_invariant_group, LLVMContext::MD_align,
           LLVMContext::MD_dereferenceable,
+          LLVMContext::MD_unconditionally_dereferenceable,
           LLVMContext::MD_dereferenceable_or_null};
       combineMetadata(NLI, &LI, KnownIDs);
     };

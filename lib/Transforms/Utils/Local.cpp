@@ -1629,6 +1629,7 @@ void llvm::combineMetadata(Instruction *K, const Instruction *J,
           MDNode::getMostGenericAlignmentOrDereferenceable(JMD, KMD));
         break;
       case LLVMContext::MD_dereferenceable:
+      case LLVMContext::MD_unconditionally_dereferenceable:
       case LLVMContext::MD_dereferenceable_or_null:
         K->setMetadata(Kind, 
           MDNode::getMostGenericAlignmentOrDereferenceable(JMD, KMD));

@@ -560,9 +560,15 @@ unsigned Value::getPointerDereferenceableBytes(const DataLayout &DL,
       CanBeNull = true;
     }
   } else if (const LoadInst *LI = dyn_cast<LoadInst>(this)) {
-    if (MDNode *MD = LI->getMetadata(LLVMContext::MD_dereferenceable)) {
+    if (MDNode *MD = LI->getMetadata(LLVMContext::MD_unconditionally_dereferenceable)) {
       ConstantInt *CI = mdconst::extract<ConstantInt>(MD->getOperand(0));
       DerefBytes = CI->getLimitedValue();
+    }
+    if (DerefBytes == 0) {
+      if (MDNode *MD = LI->getMetadata(LLVMContext::MD_dereferenceable)) {
+        ConstantInt *CI = mdconst::extract<ConstantInt>(MD->getOperand(0));
+        DerefBytes = CI->getLimitedValue();
+      }
     }
     if (DerefBytes == 0) {
       if (MDNode *MD =

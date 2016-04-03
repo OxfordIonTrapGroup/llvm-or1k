@@ -1224,6 +1224,7 @@ static bool HoistThenElseCodeToIf(BranchInst *BI,
                            LLVMContext::MD_invariant_group,
                            LLVMContext::MD_align,
                            LLVMContext::MD_dereferenceable,
+                           LLVMContext::MD_unconditionally_dereferenceable,
                            LLVMContext::MD_dereferenceable_or_null,
                            LLVMContext::MD_mem_parallel_loop_access};
     combineMetadata(I1, I2, KnownIDs);

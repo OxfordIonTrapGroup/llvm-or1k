@@ -733,7 +733,8 @@ static bool hoist(Instruction &I, const DominatorTree *DT, const Loop *CurLoop,
       // time in isGuaranteedToExecute if we don't actually have anything to
       // drop.  It is a compile time optimization, not required for correctness.
       !isGuaranteedToExecute(I, DT, CurLoop, SafetyInfo))
-    I.dropUnknownNonDebugMetadata();
+    I.dropUnknownNonDebugMetadata(
+      LLVMContext::MD_unconditionally_dereferenceable);
 
   // Move the new node to the Preheader, before its terminator.
   I.moveBefore(Preheader->getTerminator());

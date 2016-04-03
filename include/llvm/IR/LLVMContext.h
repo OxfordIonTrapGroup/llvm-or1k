@@ -69,6 +69,7 @@ public:
     MD_align = 17,                    // "align"
     MD_loop = 18,                     // "llvm.loop"
     MD_type = 19,                     // "type"
+    MD_unconditionally_dereferenceable = 20, // "unconditionally_dereferenceable"
   };
 
   /// Known operand bundle tag IDs, which always have the same value.  All

@@ -4851,10 +4851,10 @@ the loop identifier metadata node directly:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``invariant.group`` metadata may be attached to ``load``/``store`` instructions.
-The existence of the ``invariant.group`` metadata on the instruction tells 
-the optimizer that every ``load`` and ``store`` to the same pointer operand 
-within the same invariant group can be assumed to load or store the same  
-value (but see the ``llvm.invariant.group.barrier`` intrinsic which affects 
+The existence of the ``invariant.group`` metadata on the instruction tells
+the optimizer that every ``load`` and ``store`` to the same pointer operand
+within the same invariant group can be assumed to load or store the same
+value (but see the ``llvm.invariant.group.barrier`` intrinsic which affects
 when two pointers are considered the same).
 
 Examples:
@@ -4866,26 +4866,26 @@ Examples:
    %ptr = alloca i8
    store i8 42, i8* %ptr, !invariant.group !0
    call void @foo(i8* %ptr)
-   
+
    %a = load i8, i8* %ptr, !invariant.group !0 ; Can assume that value under %ptr didn't change
    call void @foo(i8* %ptr)
    %b = load i8, i8* %ptr, !invariant.group !1 ; Can't assume anything, because group changed
-  
-   %newPtr = call i8* @getPointer(i8* %ptr) 
+
+   %newPtr = call i8* @getPointer(i8* %ptr)
    %c = load i8, i8* %newPtr, !invariant.group !0 ; Can't assume anything, because we only have information about %ptr
-   
+
    %unknownValue = load i8, i8* @unknownPtr
    store i8 %unknownValue, i8* %ptr, !invariant.group !0 ; Can assume that %unknownValue == 42
-   
+
    call void @foo(i8* %ptr)
    %newPtr2 = call i8* @llvm.invariant.group.barrier(i8* %ptr)
    %d = load i8, i8* %newPtr2, !invariant.group !0  ; Can't step through invariant.group.barrier to get value of %ptr
-   
+
    ...
    declare void @foo(i8*)
    declare i8* @getPointer(i8*)
    declare i8* @llvm.invariant.group.barrier(i8*)
-   
+
    !0 = !{!"magic ptr"}
    !1 = !{!"other ptr"}
 
@@ -7063,7 +7063,20 @@ to loads of a pointer type.
 The optional ``!dereferenceable`` metadata must reference a single metadata
 name ``<deref_bytes_node>`` corresponding to a metadata node with one ``i64``
 entry. The existence of the ``!dereferenceable`` metadata on the instruction
-tells the optimizer that the value loaded is known to be dereferenceable.
+tells the optimizer that the value loaded is known to be dereferenceable,
+possibly predicated on some condition that dominates the instruction.
+The number of bytes known to be dereferenceable is specified by the integer
+value in the metadata node. This is analogous to the ''dereferenceable''
+attribute on parameters and return values. This metadata can only be applied
+to loads of a pointer type.
+
+The optional ``!unconditionally_dereferenceable`` metadata must reference
+a single metadata name ``<deref_bytes_node>`` corresponding to a metadata
+node with one ``i64`` entry. The existence of the
+``!unconditionally_dereferenceable`` metadata on the instruction tells
+the optimizer that the value loaded is known to be dereferenceable regardless
+of any conditions. This means that the loaded pointer stays dereferenceable
+even if the load is speculated.
 The number of bytes known to be dereferenceable is specified by the integer
 value in the metadata node. This is analogous to the ''dereferenceable''
 attribute on parameters and return values. This metadata can only be applied
@@ -7073,7 +7086,8 @@ The optional ``!dereferenceable_or_null`` metadata must reference a single
 metadata name ``<deref_bytes_node>`` corresponding to a metadata node with one
 ``i64`` entry. The existence of the ``!dereferenceable_or_null`` metadata on the
 instruction tells the optimizer that the value loaded is known to be either
-dereferenceable or null.
+dereferenceable or null, possibly predicated on some condition that dominates
+the instruction.
 The number of bytes known to be dereferenceable is specified by the integer
 value in the metadata node. This is analogous to the ''dereferenceable_or_null''
 attribute on parameters and return values. This metadata can only be applied
@@ -7172,7 +7186,7 @@ be reused in the cache. The code generator may select special
 instructions to save cache bandwidth, such as the ``MOVNT`` instruction on
 x86.
 
-The optional ``!invariant.group`` metadata must reference a 
+The optional ``!invariant.group`` metadata must reference a
 single metadata name ``<index>``. See ``invariant.group`` metadata.
 
 Semantics:
@@ -7278,10 +7292,10 @@ There are three arguments to the '``cmpxchg``' instruction: an address
 to operate on, a value to compare to the value currently be at that
 address, and a new value to place at that address if the compared values
 are equal. The type of '<cmp>' must be an integer or pointer type whose
-bit width is a power of two greater than or equal to eight and less 
+bit width is a power of two greater than or equal to eight and less
 than or equal to a target-specific size limit. '<cmp>' and '<new>' must
-have the same type, and the type of '<pointer>' must be a pointer to 
-that type. If the ``cmpxchg`` is marked as ``volatile``, then the 
+have the same type, and the type of '<pointer>' must be a pointer to
+that type. If the ``cmpxchg`` is marked as ``volatile``, then the
 optimizer is not allowed to modify the number or order of execution of
 this ``cmpxchg`` with other :ref:`volatile operations <volatile>`.
 
@@ -8554,7 +8568,7 @@ This instruction requires several arguments:
    ``tail`` or ``musttail`` markers to the call. It is used to prevent tail
    call optimization from being performed on the call.
 
-#. The optional ``fast-math flags`` marker indicates that the call has one or more 
+#. The optional ``fast-math flags`` marker indicates that the call has one or more
    :ref:`fast-math flags <fastmath>`, which are optimization hints to enable
    otherwise unsafe floating-point optimizations. Fast-math flags are only valid
    for calls that return a floating-point scalar or vector type.
@@ -11909,7 +11923,7 @@ Syntax:
 Overview:
 """""""""
 
-The '``llvm.invariant.group.barrier``' intrinsic can be used when an invariant 
+The '``llvm.invariant.group.barrier``' intrinsic can be used when an invariant
 established by invariant.group metadata no longer holds, to obtain a new pointer
 value that does not carry the invariant information.
 
@@ -11923,7 +11937,7 @@ the pointer to the memory for which the ``invariant.group`` no longer holds.
 Semantics:
 """"""""""
 
-Returns another pointer that aliases its argument but which is considered different 
+Returns another pointer that aliases its argument but which is considered different
 for the purposes of ``load``/``store`` ``invariant.group`` metadata.
 
 General Intrinsics

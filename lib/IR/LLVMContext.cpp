@@ -93,16 +93,16 @@ LLVMContext::LLVMContext() : pImpl(new LLVMContextImpl(*this)) {
   unsigned NonNullID = getMDKindID("nonnull");
   assert(NonNullID == MD_nonnull && "nonnull kind id drifted");
   (void)NonNullID;
-  
+
   // Create the 'dereferenceable' metadata kind.
   unsigned DereferenceableID = getMDKindID("dereferenceable");
-  assert(DereferenceableID == MD_dereferenceable && 
+  assert(DereferenceableID == MD_dereferenceable &&
          "dereferenceable kind id drifted");
   (void)DereferenceableID;
-  
+
   // Create the 'dereferenceable_or_null' metadata kind.
   unsigned DereferenceableOrNullID = getMDKindID("dereferenceable_or_null");
-  assert(DereferenceableOrNullID == MD_dereferenceable_or_null && 
+  assert(DereferenceableOrNullID == MD_dereferenceable_or_null &&
          "dereferenceable_or_null kind id drifted");
   (void)DereferenceableOrNullID;
 
@@ -137,6 +137,12 @@ LLVMContext::LLVMContext() : pImpl(new LLVMContextImpl(*this)) {
   unsigned TypeID = getMDKindID("type");
   assert(TypeID == MD_type && "type kind id drifted");
   (void)TypeID;
+
+  // Create the 'unconditionally_dereferenceable' metadata kind.
+  unsigned UnconditionallyDereferenceableID = getMDKindID("unconditionally_dereferenceable");
+  assert(UnconditionallyDereferenceableID == MD_unconditionally_dereferenceable &&
+         "unconditionally_dereferenceable kind id drifted");
+  (void)UnconditionallyDereferenceableID;
 
   auto *DeoptEntry = pImpl->getOrInsertBundleTag("deopt");
   assert(DeoptEntry->second == LLVMContext::OB_deopt &&

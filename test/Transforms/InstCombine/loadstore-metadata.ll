@@ -90,6 +90,17 @@ entry:
   ret i8* %c
 }
 
+define i8* @test_load_cast_combine_uncond_deref(i32** %ptr) {
+; Ensure (cast (load (...))) -> (load (cast (...))) preserves
+; unconditionally_dereferenceable metadata.
+; CHECK-LABEL: @test_load_cast_combine_uncond_deref(
+; CHECK: load i8*, i8** %{{.*}}, !unconditionally_dereferenceable !5
+entry:
+  %l = load i32*, i32** %ptr, !unconditionally_dereferenceable !5
+  %c = bitcast i32* %l to i8*
+  ret i8* %c
+}
+
 define void @test_load_cast_combine_loop(float* %src, i32* %dst, i32 %n) {
 ; Ensure (cast (load (...))) -> (load (cast (...))) preserves loop access
 ; metadata.

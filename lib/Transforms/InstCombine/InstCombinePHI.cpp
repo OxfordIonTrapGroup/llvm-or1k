@@ -351,6 +351,7 @@ Instruction *InstCombiner::FoldPHIArgLoadIntoPHI(PHINode &PN) {
     LLVMContext::MD_nonnull,
     LLVMContext::MD_align,
     LLVMContext::MD_dereferenceable,
+    LLVMContext::MD_unconditionally_dereferenceable,
     LLVMContext::MD_dereferenceable_or_null,
   };
 
