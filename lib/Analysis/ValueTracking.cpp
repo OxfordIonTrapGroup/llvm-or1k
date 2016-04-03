@@ -3156,12 +3156,18 @@ static bool isDereferenceableFromAttribute(const Value *BV, APInt Offset,
       CheckForNonNull = true;
     }
   } else if (const LoadInst *LI = dyn_cast<LoadInst>(BV)) {
-    if (MDNode *MD = LI->getMetadata(LLVMContext::MD_dereferenceable)) {
+    if (MDNode *MD = LI->getMetadata(LLVMContext::MD_unconditionally_dereferenceable)) {
       ConstantInt *CI = mdconst::extract<ConstantInt>(MD->getOperand(0));
       DerefBytes = CI->getLimitedValue();
     }
     if (!DerefBytes.getBoolValue()) {
-      if (MDNode *MD = 
+      if (MDNode *MD = LI->getMetadata(LLVMContext::MD_dereferenceable)) {
+        ConstantInt *CI = mdconst::extract<ConstantInt>(MD->getOperand(0));
+        DerefBytes = CI->getLimitedValue();
+      }
+    }
+    if (!DerefBytes.getBoolValue()) {
+      if (MDNode *MD =
               LI->getMetadata(LLVMContext::MD_dereferenceable_or_null)) {
         ConstantInt *CI = mdconst::extract<ConstantInt>(MD->getOperand(0));
         DerefBytes = CI->getLimitedValue();

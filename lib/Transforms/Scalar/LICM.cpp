@@ -724,8 +724,10 @@ static bool hoist(Instruction &I, BasicBlock *Preheader) {
   I.moveBefore(Preheader->getTerminator());
 
   // Metadata can be dependent on the condition we are hoisting above.
-  // Conservatively strip all metadata on the instruction.
-  I.dropUnknownNonDebugMetadata();
+  // Conservatively strip all metadata on the instruction except
+  // !unconditionally_dereferenceable.
+  I.dropUnknownNonDebugMetadata(
+    LLVMContext::MD_unconditionally_dereferenceable);
 
   if (isa<LoadInst>(I)) ++NumMovedLoads;
   else if (isa<CallInst>(I)) ++NumMovedCalls;

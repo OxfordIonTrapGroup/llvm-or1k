@@ -105,6 +105,12 @@ LLVMContext::LLVMContext() : pImpl(new LLVMContextImpl(*this)) {
          "dereferenceable_or_null kind id drifted");
   (void)DereferenceableOrNullID;
 
+  // Create the 'unconditionally_dereferenceable' metadata kind.
+  unsigned UnconditionallyDereferenceableID = getMDKindID("unconditionally_dereferenceable");
+  assert(UnconditionallyDereferenceableID == MD_unconditionally_dereferenceable &&
+         "unconditionally_dereferenceable kind id drifted");
+  (void)UnconditionallyDereferenceableID;
+
   // Create the 'make.implicit' metadata kind.
   unsigned MakeImplicitID = getMDKindID("make.implicit");
   assert(MakeImplicitID == MD_make_implicit &&

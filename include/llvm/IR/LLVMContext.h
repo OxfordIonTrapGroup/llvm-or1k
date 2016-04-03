@@ -60,10 +60,11 @@ public:
     MD_nonnull = 11, // "nonnull"
     MD_dereferenceable = 12, // "dereferenceable"
     MD_dereferenceable_or_null = 13, // "dereferenceable_or_null"
-    MD_make_implicit = 14, // "make.implicit"
-    MD_unpredictable = 15, // "unpredictable"
-    MD_invariant_group = 16, // "invariant.group"
-    MD_align = 17 // "align"
+    MD_unconditionally_dereferenceable = 14, // "unconditionally_dereferenceable"
+    MD_make_implicit = 15, // "make.implicit"
+    MD_unpredictable = 16, // "unpredictable"
+    MD_invariant_group = 17, // "invariant.group"
+    MD_align = 18, // "align"
   };
 
   /// Known operand bundle tag IDs, which always have the same value.  All
