@@ -70,6 +70,7 @@ public:
     MD_loop = 18,                     // "llvm.loop"
     MD_type = 19,                     // "type"
     MD_unconditionally_dereferenceable = 20, // "unconditionally_dereferenceable"
+    MD_unconditionally_invariant_load = 21,  // "unconditionally.invariant.load"
   };
 
   /// Known operand bundle tag IDs, which always have the same value.  All

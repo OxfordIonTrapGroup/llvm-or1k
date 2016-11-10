@@ -1617,6 +1617,10 @@ void llvm::combineMetadata(Instruction *K, const Instruction *J,
         // Only set the !invariant.load if it is present in both instructions.
         K->setMetadata(Kind, JMD);
         break;
+      case LLVMContext::MD_unconditionally_invariant_load:
+        // Only set the !unconditionally.invariant.load if it is present in both instructions.
+        K->setMetadata(Kind, JMD);
+        break;
       case LLVMContext::MD_nonnull:
         // Only set the !nonnull if it is present in both instructions.
         K->setMetadata(Kind, JMD);
@@ -1625,13 +1629,13 @@ void llvm::combineMetadata(Instruction *K, const Instruction *J,
         // Preserve !invariant.group in K.
         break;
       case LLVMContext::MD_align:
-        K->setMetadata(Kind, 
+        K->setMetadata(Kind,
           MDNode::getMostGenericAlignmentOrDereferenceable(JMD, KMD));
         break;
       case LLVMContext::MD_dereferenceable:
       case LLVMContext::MD_unconditionally_dereferenceable:
       case LLVMContext::MD_dereferenceable_or_null:
-        K->setMetadata(Kind, 
+        K->setMetadata(Kind,
           MDNode::getMostGenericAlignmentOrDereferenceable(JMD, KMD));
         break;
     }
@@ -1651,7 +1655,7 @@ unsigned llvm::replaceDominatedUsesWith(Value *From, Value *To,
                                         DominatorTree &DT,
                                         const BasicBlockEdge &Root) {
   assert(From->getType() == To->getType());
-  
+
   unsigned Count = 0;
   for (Value::use_iterator UI = From->use_begin(), UE = From->use_end();
        UI != UE; ) {
@@ -1823,7 +1827,7 @@ collectBitParts(Value *V, bool MatchBSwaps, bool MatchBitReversals,
       unsigned NumMaskedBits = AndMask.countPopulation();
       if (!MatchBitReversals && NumMaskedBits % 8 != 0)
         return Result;
-      
+
       auto &Res = collectBitParts(I->getOperand(0), MatchBSwaps,
                                   MatchBitReversals, BPS);
       if (!Res)

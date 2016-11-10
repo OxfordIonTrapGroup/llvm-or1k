@@ -437,6 +437,8 @@ MemDepResult MemoryDependenceResults::getSimplePointerDependencyFrom(
     LoadInst *LI = dyn_cast<LoadInst>(QueryInst);
     if (LI && LI->getMetadata(LLVMContext::MD_invariant_load) != nullptr)
       isInvariantLoad = true;
+    if (LI && LI->getMetadata(LLVMContext::MD_unconditionally_invariant_load) != nullptr)
+      isInvariantLoad = true;
   }
 
   const DataLayout &DL = BB->getModule()->getDataLayout();

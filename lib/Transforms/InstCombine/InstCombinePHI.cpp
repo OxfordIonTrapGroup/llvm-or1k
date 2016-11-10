@@ -346,6 +346,7 @@ Instruction *InstCombiner::FoldPHIArgLoadIntoPHI(PHINode &PN) {
     LLVMContext::MD_tbaa,
     LLVMContext::MD_range,
     LLVMContext::MD_invariant_load,
+    LLVMContext::MD_unconditionally_invariant_load,
     LLVMContext::MD_alias_scope,
     LLVMContext::MD_noalias,
     LLVMContext::MD_nonnull,

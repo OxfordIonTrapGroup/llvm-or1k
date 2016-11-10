@@ -3471,7 +3471,8 @@ void SelectionDAGBuilder::visitLoad(const LoadInst &I) {
   // with a guarantee that the location being loaded from is dereferenceable
   // throughout the function's lifetime.
 
-  bool isInvariant = I.getMetadata(LLVMContext::MD_invariant_load) != nullptr &&
+  bool isInvariant = (I.getMetadata(LLVMContext::MD_invariant_load) != nullptr ||
+                      I.getMetadata(LLVMContext::MD_unconditionally_invariant_load) != nullptr) &&
                      isDereferenceablePointer(SV, DAG.getDataLayout());
   unsigned Alignment = I.getAlignment();
 

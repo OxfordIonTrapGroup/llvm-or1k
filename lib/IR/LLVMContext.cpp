@@ -144,6 +144,12 @@ LLVMContext::LLVMContext() : pImpl(new LLVMContextImpl(*this)) {
          "unconditionally_dereferenceable kind id drifted");
   (void)UnconditionallyDereferenceableID;
 
+  // Create the 'unconditionally.invariant.load' metadata kind.
+  unsigned UnconditionallyInvariantLdId = getMDKindID("unconditionally.invariant.load");
+  assert(UnconditionallyInvariantLdId == MD_unconditionally_invariant_load &&
+         "unconditionally.invariant.load kind id drifted");
+  (void)UnconditionallyInvariantLdId;
+
   auto *DeoptEntry = pImpl->getOrInsertBundleTag("deopt");
   assert(DeoptEntry->second == LLVMContext::OB_deopt &&
          "deopt operand bundle id drifted!");

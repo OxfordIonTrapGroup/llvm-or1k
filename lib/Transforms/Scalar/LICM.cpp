@@ -453,6 +453,8 @@ bool canSinkOrHoistInst(Instruction &I, AliasAnalysis *AA, DominatorTree *DT,
       return true;
     if (LI->getMetadata(LLVMContext::MD_invariant_load))
       return true;
+    if (LI->getMetadata(LLVMContext::MD_unconditionally_invariant_load))
+      return true;
 
     // Don't hoist loads which have may-aliased stores in loop.
     uint64_t Size = 0;
@@ -734,6 +736,7 @@ static bool hoist(Instruction &I, const DominatorTree *DT, const Loop *CurLoop,
       // drop.  It is a compile time optimization, not required for correctness.
       !isGuaranteedToExecute(I, DT, CurLoop, SafetyInfo))
     I.dropUnknownNonDebugMetadata(
+      LLVMContext::MD_unconditionally_invariant_load,
       LLVMContext::MD_unconditionally_dereferenceable);
 
   // Move the new node to the Preheader, before its terminator.

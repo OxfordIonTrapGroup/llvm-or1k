@@ -1339,7 +1339,7 @@ void FastISel::removeDeadLocalValueCode(MachineInstr *SavedLastLocalValue)
 {
   MachineInstr *CurLastLocalValue = getLastLocalValue();
   if (CurLastLocalValue != SavedLastLocalValue) {
-    // Find the first local value instruction to be deleted. 
+    // Find the first local value instruction to be deleted.
     // This is the instruction after SavedLastLocalValue if it is non-NULL.
     // Otherwise it's the first instruction in the block.
     MachineBasicBlock::iterator FirstDeadInst(SavedLastLocalValue);
@@ -1364,7 +1364,7 @@ bool FastISel::selectInstruction(const Instruction *I) {
     if (!handlePHINodesInSuccessorBlocks(I->getParent())) {
       // PHI node handling may have generated local value instructions,
       // even though it failed to handle all PHI nodes.
-      // We remove these instructions because SelectionDAGISel will generate 
+      // We remove these instructions because SelectionDAGISel will generate
       // them again.
       removeDeadLocalValueCode(SavedLastLocalValue);
       return false;
@@ -1425,7 +1425,7 @@ bool FastISel::selectInstruction(const Instruction *I) {
   DbgLoc = DebugLoc();
   // Undo phi node updates, because they will be added again by SelectionDAG.
   if (isa<TerminatorInst>(I)) {
-    // PHI node handling may have generated local value instructions. 
+    // PHI node handling may have generated local value instructions.
     // We remove them because SelectionDAGISel will generate them again.
     removeDeadLocalValueCode(SavedLastLocalValue);
     FuncInfo.PHINodesToUpdate.resize(FuncInfo.OrigNumPHINodesToUpdate);
@@ -2180,7 +2180,8 @@ FastISel::createMachineMemOperandFor(const Instruction *I) const {
     return nullptr;
 
   bool IsNonTemporal = I->getMetadata(LLVMContext::MD_nontemporal) != nullptr;
-  bool IsInvariant = I->getMetadata(LLVMContext::MD_invariant_load) != nullptr;
+  bool IsInvariant = I->getMetadata(LLVMContext::MD_invariant_load) != nullptr ||
+                     I->getMetadata(LLVMContext::MD_unconditionally_invariant_load) != nullptr;
   const MDNode *Ranges = I->getMetadata(LLVMContext::MD_range);
 
   AAMDNodes AAInfo;

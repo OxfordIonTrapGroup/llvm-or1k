@@ -346,6 +346,7 @@ static LoadInst *combineLoadToNewType(InstCombiner &IC, LoadInst &LI, Type *NewT
     case LLVMContext::MD_fpmath:
     case LLVMContext::MD_tbaa_struct:
     case LLVMContext::MD_invariant_load:
+    case LLVMContext::MD_unconditionally_invariant_load:
     case LLVMContext::MD_alias_scope:
     case LLVMContext::MD_noalias:
     case LLVMContext::MD_nontemporal:
@@ -428,6 +429,7 @@ static StoreInst *combineStoreToNewValue(InstCombiner &IC, StoreInst &SI, Value 
       break;
 
     case LLVMContext::MD_invariant_load:
+    case LLVMContext::MD_unconditionally_invariant_load:
     case LLVMContext::MD_nonnull:
     case LLVMContext::MD_range:
     case LLVMContext::MD_align:
@@ -834,6 +836,7 @@ Instruction *InstCombiner::visitLoadInst(LoadInst &LI) {
           LLVMContext::MD_invariant_group, LLVMContext::MD_align,
           LLVMContext::MD_dereferenceable,
           LLVMContext::MD_unconditionally_dereferenceable,
+          LLVMContext::MD_unconditionally_invariant_load,
           LLVMContext::MD_dereferenceable_or_null};
       combineMetadata(NLI, &LI, KnownIDs);
     };
@@ -1282,7 +1285,7 @@ Instruction *InstCombiner::visitStoreInst(StoreInst &SI) {
 bool InstCombiner::SimplifyStoreAtEndOfBlock(StoreInst &SI) {
   assert(SI.isUnordered() &&
          "this code has not been auditted for volatile or ordered store case");
-  
+
   BasicBlock *StoreBB = SI.getParent();
 
   // Check to see if the successor block has exactly two incoming edges.  If

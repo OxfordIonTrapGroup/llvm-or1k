@@ -1580,6 +1580,8 @@ bool GVN::PerformLoadPRE(LoadInst *LI, AvailValInBlkVect &ValuesPerBlock,
 
     if (auto *MD = LI->getMetadata(LLVMContext::MD_invariant_load))
       NewLoad->setMetadata(LLVMContext::MD_invariant_load, MD);
+    if (auto *MD = LI->getMetadata(LLVMContext::MD_unconditionally_invariant_load))
+      NewLoad->setMetadata(LLVMContext::MD_unconditionally_invariant_load, MD);
     if (auto *InvGroupMD = LI->getMetadata(LLVMContext::MD_invariant_group))
       NewLoad->setMetadata(LLVMContext::MD_invariant_group, InvGroupMD);
     if (auto *RangeMD = LI->getMetadata(LLVMContext::MD_range))
@@ -1769,7 +1771,8 @@ static void patchReplacementInstruction(Instruction *I, Value *Repl) {
       LLVMContext::MD_tbaa,           LLVMContext::MD_alias_scope,
       LLVMContext::MD_noalias,        LLVMContext::MD_range,
       LLVMContext::MD_fpmath,         LLVMContext::MD_invariant_load,
-      LLVMContext::MD_invariant_group};
+      LLVMContext::MD_invariant_group,
+      LLVMContext::MD_unconditionally_invariant_load};
   combineMetadata(ReplInst, I, KnownIDs);
 }
 
