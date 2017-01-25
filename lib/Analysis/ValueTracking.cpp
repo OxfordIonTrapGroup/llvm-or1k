@@ -3161,6 +3161,10 @@ bool llvm::isSafeToSpeculativelyExecute(const Value *V,
       case Intrinsic::rint:
       case Intrinsic::round:
         return true;
+      // These intrinsics do not correspond to any libm function, and
+      // do not have any defined error handling semantics.
+      case Intrinsic::powi:
+        return true;
       // TODO: are convert_{from,to}_fp16 safe?
       // TODO: can we list target-specific intrinsics here?
       default: break;
