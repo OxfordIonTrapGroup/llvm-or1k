@@ -1,0 +1,21 @@
+package:
+  name: llvm-or1k
+  version: "6.0.0"
+
+source:
+  git_url: ../..
+
+build:
+  number: 25
+
+requirements:
+  build:
+    - cmake
+#    - system [linux]
+#  run:
+#    - system [linux]
+
+about:
+  home: http://llvm.org/
+  license: Open Source (http://llvm.org/releases/6.0.0/LICENSE.TXT)
+  summary: Development headers and libraries for LLVM
